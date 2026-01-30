@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Volunteer · CivicAid{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div class="page-head-row">
+    <div>
+      <h1 class="page-title">
+        {{ profile.full_name|default:profile.user.username }}
+      </h1>
+      <p class="page-sub">
+        {{ profile.city|default:"City not set" }} · Volunteer profile
+      </p>
+    </div>
+
+    <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
+
+      <a class="btn btn-ghost" href="{% url 'offers_list' %}">
+        Back
+      </a>
+
+      {% if request.user.is_authenticated and request.user != profile.user and profile.contact_email %}
+        <a class="btn btn-primary"
+           href="mailto:{{ profile.contact_email }}">
+          Contact
+        </a>
+      {% endif %}
+
+      {% if request.user.is_authenticated and request.user == profile.user %}
+        <a class="btn btn-primary"
+           href="{% url 'edit_profile' %}">
+          Edit profile
+        </a>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+<section class="two-col">
+
+  <!-- LEFT COLUMN -->
+  <div class="card">
+    <h3 class="sub-h">About</h3>
+
+    <p class="text-muted" style="margin-top:.4rem;">
+      {{ profile.bio|default:"No bio yet." }}
+    </p>
+
+    <div class="line"></div>
+
+    <div class="kv">
+
+      <div class="kv-row">
+        <div class="kv-key">Availability</div>
+        <div class="kv-val">
+          {{ profile.availability|default:"—" }}
+        </div>
+      </div>
+
+      <div class="kv-row">
+        <div class="kv-key">City</div>
+        <div class="kv-val">
+          {{ profile.city|default:"—" }}
+        </div>
+      </div>
+
+      <div class="kv-row">
+        <div class="kv-key">Categories</div>
+        <div class="kv-val">
+          <div class="vol-tags" style="margin-top:.2rem;">
+            {% for c in profile.categories.all %}
+              <span class="tag">{{ c.name }}</span>
+            {% empty %}
+              <span class="tag">General</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Email Row -->
+      <div class="kv-row">
+        <div class="kv-key">Contact</div>
+        <div class="kv-val">
+          {% if profile.contact_email %}
+            <a class="auth-link"
+               href="mailto:{{ profile.contact_email }}">
+              {{ profile.contact_email }}
+            </a>
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="card">
+    <h3 class="sub-h">Suggested open requests</h3>
+
+    <p class="text-muted" style="margin-top:.35rem;">
+      Matches by city and/or categories.
+    </p>
+
+    <div class="req-mini-grid">
+      {% for r in suggested %}
+
+        <article class="req-mini">
+
+          <div class="req-mini-top">
+            <div>
+              <div class="req-mini-title">
+                {{ r.title }}
+              </div>
+              <div class="req-mini-meta">
+                {{ r.city }} · {{ r.category.name }}
+              </div>
+            </div>
+
+            <span class="pill">
+              Urgency: {{ r.get_urgency_display }}
+            </span>
+          </div>
+
+          <p class="req-mini-desc">
+            {{ r.description|truncatechars:100 }}
+          </p>
+
+          <div class="req-mini-actions">
+            <a class="btn btn-ghost"
+               href="{% url 'request_detail' r.id %}">
+              View
+            </a>
+
+            {% if request.user.is_authenticated and request.user != r.owner %}
+              <a class="btn btn-primary"
+                 href="{% url 'claim_request' r.id %}">
+                Claim
+              </a>
+            {% endif %}
+          </div>
+
+        </article>
+
+      {% empty %}
+        <div class="form-card">
+          <h3 style="margin:0 0 .3rem;">No matches right now</h3>
+          <p style="margin:0;color:var(--muted);">
+            Try adding city/categories in your profile, or check the open requests list.
+          </p>
+          <div style="margin-top:.8rem;">
+            <a class="btn btn-ghost"
+               href="{% url 'requests_list' %}">
+              Browse open requests
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

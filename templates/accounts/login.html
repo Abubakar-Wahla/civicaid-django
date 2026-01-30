@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Login · CivicAid{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-head">
+      <div>
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-sub">Login to create, claim, and track requests.</p>
+      </div>
+      <span class="auth-badge">Secure access</span>
+    </div>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+
+      <div>
+        <label class="auth-label">Username</label>
+        <input class="auth-input" type="text" name="username" required>
+      </div>
+
+      <div>
+        <label class="auth-label">Password</label>
+        <input class="auth-input" type="password" name="password" required>
+      </div>
+
+      {% if form.errors %}
+        <div class="auth-errors">{{ form.errors }}</div>
+      {% endif %}
+
+      <div class="auth-actions">
+        <button class="btn btn-primary" type="submit">Login</button>
+        <a class="btn btn-ghost" href="{% url 'password_reset' %}">Forgot password?</a>
+      </div>
+    </form>
+
+    <div class="auth-footer">
+      <span>New here?</span>
+      <a class="auth-link" href="{% url 'signup' %}">Create an account</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

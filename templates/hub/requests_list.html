@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}CivicAid · Requests{% endblock %}
+
+{% block content %}
+
+  <!-- Page Heading + Tabs -->
+  <div class="page-head">
+    <h1 class="h1">{{ page_title }}</h1>
+    <p class="p">Search, filter, and browse requests.</p>
+
+    <div class="tabs">
+      <a class="tab {% if base_status == 'OPEN' %}tab--active{% endif %}" href="{% url 'requests_list' %}">Open</a>
+      <a class="tab {% if base_status == 'IN_PROGRESS' %}tab--active{% endif %}" href="{% url 'in_progress_requests' %}">In Progress</a>
+      <a class="tab {% if base_status == 'COMPLETED' %}tab--active{% endif %}" href="{% url 'completed_requests' %}">Completed</a>
+    </div>
+  </div>
+
+  <!-- Search + Filters UI -->
+  <form method="get" action="" class="filters">
+    <div class="filters-row">
+      <input class="form-input" type="text" name="q" placeholder="Search requests..." value="{{ q }}">
+      <select class="form-input" name="category">
+        <option value="">All categories</option>
+        {% for c in categories %}
+          <option value="{{ c.id }}" {% if category_id|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
+            {{ c.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="filters-row">
+      <select class="form-input" name="status">
+        <option value="">All status</option>
+        <option value="OPEN" {% if status == "OPEN" %}selected{% endif %}>Open</option>
+        <option value="IN_PROGRESS" {% if status == "IN_PROGRESS" %}selected{% endif %}>In Progress</option>
+        <option value="COMPLETED" {% if status == "COMPLETED" %}selected{% endif %}>Completed</option>
+        <option value="CANCELLED" {% if status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
+      </select>
+
+      <select class="form-input" name="urgency">
+        <option value="">All urgency</option>
+        <option value="LOW" {% if urgency == "LOW" %}selected{% endif %}>Low</option>
+        <option value="MEDIUM" {% if urgency == "MEDIUM" %}selected{% endif %}>Medium</option>
+        <option value="HIGH" {% if urgency == "HIGH" %}selected{% endif %}>High</option>
+      </select>
+
+      <button class="btn btn-primary" type="submit">Apply</button>
+      <a class="btn btn-ghost" href="">Reset</a>
+    </div>
+  </form>
+
+  <div class="cards-grid">
+    {% for r in page_obj %}
+      <article class="req-card">
+        <!-- Top -->
+        <div class="req-top">
+          <div class="req-title-wrap">
+            <h3 class="req-title">{{ r.title }}</h3>
+            <p class="req-meta">
+              <span class="meta-dot">●</span> {{ r.city }}
+              <span class="meta-sep">·</span>
+              {{ r.category.name }}
+            </p>
+          </div>
+
+          <div class="req-badges">
+            <span class="pill">Urgency: {{ r.get_urgency_display }}</span>
+            <span class="pill">{{ r.get_status_display }}</span>
+          </div>
+        </div>
+
+        <!-- Middle -->
+        <div class="req-mid">
+          <p class="req-desc">
+            {{ r.description|truncatechars:140 }}
+          </p>
+        </div>
+
+        <!-- Bottom -->
+        <div class="req-bottom">
+          <a class="btn btn-ghost" href="{% url 'request_detail' r.id %}">
+            View Details
+          </a>
+
+          <span class="req-owner">
+            by <strong>{{ r.owner.username }}</strong>
+            <span class="meta-sep">·</span>
+            {{ r.created|date:"M d, Y" }}
+          </span>
+        </div>
+      </article>
+    {% empty %}
+      <div class="card">
+        <p class="muted">No requests found.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination UI -->
+  {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a class="page-btn" href="?q={{ q }}&category={{ category_id }}&status={{ status }}&urgency={{ urgency }}&page={{ page_obj.previous_page_number }}">Prev</a>
+      {% else %}
+        <span class="page-btn page-btn--disabled">Prev</span>
+      {% endif %}
+
+      <span class="page-info">
+        Page <strong>{{ page_obj.number }}</strong> of {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+        <a class="page-btn" href="?q={{ q }}&category={{ category_id }}&status={{ status }}&urgency={{ urgency }}&page={{ page_obj.next_page_number }}">Next</a>
+      {% else %}
+        <span class="page-btn page-btn--disabled">Next</span>
+      {% endif %}
+    </div>
+  {% endif %}
+
+{% endblock %}

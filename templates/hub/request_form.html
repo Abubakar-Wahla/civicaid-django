@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}New Request · CivicAid{% endblock %}
+
+{% block content %}
+  <div class="form-wrap">
+    <div class="form-card">
+      <div class="form-head">
+        <h1 class="auth-title">
+          {% if is_edit %}Edit Request{% else %}Create a Help Request{% endif %}
+        </h1>
+        <p class="muted">
+          {% if is_edit %}
+            Update your request details.
+          {% else %}
+            Post a request so volunteers can find and help you.
+          {% endif %}
+        </p>
+      </div>
+
+      <form method="post" class="site-form">
+        {% csrf_token %}
+
+        <label class="auth-label">Title</label>
+        {{ form.title }}
+
+        <label class="auth-label">Description</label>
+        {{ form.description }}
+
+        <div class="form-row">
+          <div>
+            <label class="auth-label">Category</label>
+            {{ form.category }}
+          </div>
+          <div>
+            <label class="auth-label">Urgency</label>
+            {{ form.urgency }}
+          </div>
+        </div>
+
+        <label class="auth-label">City</label>
+        {{ form.city }}
+
+        {% if form.errors %}
+          <div class="auth-errors">{{ form.errors }}</div>
+        {% endif %}
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">
+            {% if is_edit %}Save Changes{% else %}Publish Request{% endif %}
+          </button>
+          <a class="btn btn-ghost" href="{% url 'requests_list' %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+<nav class="navbar">
+  <div class="nav-inner">
+
+    <!-- Brand -->
+    <div class="nav-brand">
+      <a href="{% url 'home' %}" class="brand">
+        <span class="brand-logo">CA</span>
+        <span class="brand-text">
+          <strong>CivicAid</strong>
+          <small>Help · Volunteers · Impact</small>
+        </span>
+      </a>
+    </div>
+
+    <!-- Main navigation -->
+    <div class="nav-main">
+      <a href="{% url 'requests_list' %}" class="nav-link">Requests</a>
+      <a href="{% url 'offers_list' %}" class="nav-link">Volunteers</a>
+      <a href="{% url 'contact' %}" class="nav-link">Contact</a>
+      <a href="{% url 'impact' %}" class="nav-link">Impact</a>
+    </div>
+
+    <!-- Account -->
+    <div class="nav-account">
+      {% if request.user.is_authenticated %}
+        <div class="account-menu">
+          <button class="account-btn">
+            {{ request.user.username }}
+            <span class="caret">▾</span>
+          </button>
+
+          <div class="account-dropdown">
+            <a href="{% url 'create_request' %}">New Request</a>
+            <a href="{% url 'my_requests' %}">My Requests</a>
+            <a href="{% url 'my_claimed_requests' %}">My Claimed</a>
+            <a href="{% url 'my_completed_requests' %}">My Completed</a>
+            <a href="{% url 'edit_profile' %}">My Profile</a>
+            <div class="divider"></div>
+            <a href="{% url 'logout' %}" class="danger">Logout</a>
+          </div>
+        </div>
+      {% else %}
+        <a class="btn btn-ghost" href="{% url 'login' %}">Login</a>
+        <a class="btn btn-primary" href="{% url 'signup' %}">Sign up</a>
+      {% endif %}
+    </div>
+
+  </div>
+</nav>

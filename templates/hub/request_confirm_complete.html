@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Complete Request · CivicAid{% endblock %}
+{% block content %}
+  <div class="form-wrap">
+    <div class="form-card">
+      <h1 class="auth-title">Mark as completed?</h1>
+      <p class="muted">
+        Confirm completion for: <strong>{{ item.title }}</strong>
+      </p>
+
+      <form method="post" style="margin-top:1rem;">
+        {% csrf_token %}
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Yes, completed</button>
+          <a class="btn btn-ghost" href="{% url 'request_detail' item.id %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

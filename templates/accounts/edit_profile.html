@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}My Profile · CivicAid{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card" style="max-width:720px;">
+    <div class="auth-head">
+      <div>
+        <h1 class="auth-title">My volunteer profile</h1>
+        <p class="auth-sub">This appears in the Volunteers directory.</p>
+      </div>
+      <span class="auth-badge">Public</span>
+    </div>
+
+    <form method="post" class="auth-form" novalidate>
+      {% csrf_token %}
+
+      <div class="grid-2">
+        <div>
+          <label class="auth-label">Full name</label>
+          {{ form.full_name }}
+          {% if form.full_name.errors %}<div class="auth-errors">{{ form.full_name.errors }}</div>{% endif %}
+        </div>
+
+        <div>
+          <label class="auth-label">City</label>
+          {{ form.city }}
+          {% if form.city.errors %}<div class="auth-errors">{{ form.city.errors }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div>
+        <label class="auth-label">Availability</label>
+        {{ form.availability }}
+        {% if form.availability.errors %}<div class="auth-errors">{{ form.availability.errors }}</div>{% endif %}
+      </div>
+
+      <div>
+        <label class="auth-label">Bio</label>
+        {{ form.bio }}
+        {% if form.bio.errors %}<div class="auth-errors">{{ form.bio.errors }}</div>{% endif %}
+      </div>
+      
+  <div>
+    <label class="auth-label">Contact email</label>
+    {{ form.contact_email }}
+  </div>
+
+
+      <div>
+        <label class="auth-label">I can help with</label>
+        <div class="checks">
+          {{ form.categories }}
+        </div>
+        {% if form.categories.errors %}<div class="auth-errors">{{ form.categories.errors }}</div>{% endif %}
+      </div>
+
+      <div class="auth-actions">
+        <button class="btn btn-primary" type="submit">Save profile</button>
+        <a class="btn btn-ghost" href="{% url 'offers_list' %}">Back</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

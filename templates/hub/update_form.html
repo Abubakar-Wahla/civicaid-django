@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Post Update · CivicAid{% endblock %}
+
+{% block content %}
+  <div class="form-wrap">
+    <div class="form-card">
+      <h1 class="auth-title">Post an update</h1>
+      <p class="muted">For: <strong style="color:var(--text);">{{ item.title }}</strong></p>
+
+      <form method="post" class="site-form" style="margin-top:1rem;">
+        {% csrf_token %}
+
+        <label class="auth-label">Update message</label>
+        {{ form.message }}
+
+        {% if form.errors %}
+          <div class="auth-errors">{{ form.errors }}</div>
+        {% endif %}
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Post update</button>
+          <a class="btn btn-ghost" href="{% url 'request_detail' item.id %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}403 · Not allowed{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1 class="auth-title">Not allowed</h1>
+    <p class="auth-sub">You don’t have permission to access this page.</p>
+    <div class="auth-actions" style="margin-top:1rem;">
+      <a class="btn btn-primary" href="{% url 'home' %}">Go home</a>
+      <a class="btn btn-ghost" href="{% url 'requests_list' %}">Browse requests</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

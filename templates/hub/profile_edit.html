@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile · CivicAid{% endblock %}
+
+{% block content %}
+  <div class="form-wrap">
+    <div class="form-card">
+      <h1 class="auth-title">Your Profile</h1>
+      <p class="muted">Set your role and what help you can provide.</p>
+
+      <form method="post" class="site-form">
+        {% csrf_token %}
+
+        <label class="auth-label">Role</label>
+        {{ form.role }}
+
+        <label class="auth-label">City</label>
+        {{ form.city }}
+
+        <label class="auth-label">Bio</label>
+        {{ form.bio }}
+
+        {% if form.errors %}
+          <div class="auth-errors">{{ form.errors }}</div>
+        {% endif %}
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Save</button>
+          <a class="btn btn-ghost" href="{% url 'offers_list' %}">Back</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Impact · CivicAid{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div class="page-head-row">
+    <div>
+      <h1 class="page-title">Impact</h1>
+      <p class="page-sub">Completed help requests and community outcomes.</p>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Completed</div>
+      <div class="kpi-value">{{ totals.completed }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">In progress</div>
+      <div class="kpi-value">{{ totals.in_progress }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Open</div>
+      <div class="kpi-value">{{ totals.open }}</div>
+    </div>
+  </div>
+
+  <form method="get" class="filter-bar">
+    <input class="filter-input" type="text" name="q" value="{{ q }}" placeholder="Search completed requests" />
+    <input class="filter-input" type="text" name="city" value="{{ city }}" placeholder="City" style="min-width:180px; flex:0.6;" />
+    <select class="filter-select" name="category">
+      <option value="">All categories</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}" {% if category_id|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.name }}
+        </option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-ghost" type="submit">Filter</button>
+  </form>
+</section>
+
+<section class="two-col">
+  <div class="card">
+    <h3 class="sub-h">Top categories</h3>
+    <div class="impact-bars">
+      {% for row in top_categories %}
+        <div class="impact-row">
+          <span class="impact-name">{{ row.category__name }}</span>
+          <span class="pill">{{ row.total }}</span>
+        </div>
+      {% empty %}
+        <p class="text-muted">No completed requests yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="sub-h">Latest completed</h3>
+
+    <div class="impact-list">
+      {% for r in page_obj %}
+        <article class="impact-item">
+          <div class="impact-top">
+            <div>
+              <div class="impact-title">{{ r.title }}</div>
+              <div class="impact-meta">{{ r.city }} · {{ r.category.name }}</div>
+            </div>
+            <span class="pill">Completed</span>
+          </div>
+          <p class="impact-desc">{{ r.description|truncatechars:150 }}</p>
+          <div class="impact-actions">
+            <a class="btn btn-ghost" href="{% url 'request_detail' r.id %}">View</a>
+          </div>
+        </article>
+      {% empty %}
+        <div class="form-card">
+          <h3 style="margin:0 0 .3rem;">No outcomes yet</h3>
+          <p style="margin:0;color:var(--muted);">Complete a request to show impact here.</p>
+          <div style="margin-top:.8rem;">
+            <a class="btn btn-ghost" href="{% url 'requests_list' %}">Browse open requests</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

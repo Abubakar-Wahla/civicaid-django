@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Sign up · CivicAid{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-head">
+      <div>
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-sub">Sign up to create requests or volunteer.</p>
+      </div>
+      <span class="auth-badge">Free</span>
+    </div>
+
+    <form method="post" class="auth-form" novalidate>
+      {% csrf_token %}
+
+      <div>
+        <label class="auth-label">Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+          <div class="auth-errors">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div>
+        <label class="auth-label">Password</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+          <div class="auth-errors">{{ form.password1.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div>
+        <label class="auth-label">Confirm password</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+          <div class="auth-errors">{{ form.password2.errors }}</div>
+        {% endif %}
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="auth-errors">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="auth-actions">
+        <button class="btn btn-primary" type="submit">Create account</button>
+        <a class="btn btn-ghost" href="{% url 'login' %}">Back to login</a>
+      </div>
+    </form>
+
+    <div class="auth-footer">
+      <span>Already have an account?</span>
+      <a class="auth-link" href="{% url 'login' %}">Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

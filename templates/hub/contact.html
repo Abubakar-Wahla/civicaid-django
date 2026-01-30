@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Contact · CivicAid{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1 class="h1">Contact</h1>
+    <p class="p">Send a message about partnerships, volunteering, or issues.</p>
+  </div>
+
+  <div class="form-card" style="max-width:760px;">
+    <form method="post" class="site-form">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <div>
+          <label class="auth-label">Name</label>
+          {{ form.name }}
+        </div>
+        <div>
+          <label class="auth-label">Email</label>
+          {{ form.email }}
+        </div>
+      </div>
+
+      <label class="auth-label">Subject</label>
+      {{ form.subject }}
+
+      <label class="auth-label">Message</label>
+      {{ form.message }}
+
+      {% if form.errors %}
+        <div class="auth-errors">{{ form.errors }}</div>
+      {% endif %}
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Send message</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

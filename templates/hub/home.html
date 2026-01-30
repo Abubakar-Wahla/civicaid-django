@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}CivicAid · Home{% endblock %}
+
+{% block content %}
+
+<section class="home-hero">
+  <div class="home-hero-inner">
+    <div class="home-hero-top">
+      <div class="home-badge">CivicAid · Real-world help</div>
+      <div class="home-stats">
+        <span class="pill">Open: {{ open_requests }}</span>
+        <span class="pill">In progress: {{ in_progress }}</span>
+        <span class="pill">Completed: {{ completed }}</span>
+      </div>
+    </div>
+
+    <h1 class="home-title">
+      Help requests. Real volunteers. Clear outcomes.
+    </h1>
+
+    <p class="home-subtitle">
+      Post a request, volunteers claim it, and both sides track progress with timeline updates.
+    </p>
+
+    <div class="home-actions">
+      <a class="btn btn-primary" href="{% url 'create_request' %}">Create request</a>
+      <a class="btn btn-ghost" href="{% url 'requests_list' %}">Browse open requests</a>
+      <a class="btn btn-ghost" href="{% url 'offers_list' %}">View volunteers</a>
+    </div>
+
+    <div class="home-micro">
+      Built with Django · Permissions · Workflows · Search/Filters/Pagination · Updates timeline
+    </div>
+  </div>
+</section>
+
+<section class="home-section">
+  <div class="home-section-head">
+    <div>
+      <h2 class="home-h2">Latest open requests</h2>
+      <p class="home-p">A quick preview of what needs help right now.</p>
+    </div>
+    <a class="btn btn-ghost" href="{% url 'requests_list' %}">See all</a>
+  </div>
+
+  <!-- UPDATED GRID -->
+  <div class="home-grid">
+    {% for r in latest_open %}
+      <article class="home-card">
+        <div class="home-card-top">
+          <div>
+            <h3 class="home-card-title">{{ r.title }}</h3>
+            <div class="home-card-meta">{{ r.city }} · {{ r.category.name }}</div>
+          </div>
+          <div class="home-card-badges">
+            <span class="pill">Urgency: {{ r.get_urgency_display }}</span>
+          </div>
+        </div>
+
+        <p class="home-card-desc">{{ r.description|truncatechars:140 }}</p>
+
+        <div class="home-card-bottom">
+          <a class="btn btn-ghost" href="{% url 'request_detail' r.id %}">View</a>
+          {% if request.user.is_authenticated and request.user != r.owner %}
+            <a class="btn btn-primary" href="{% url 'claim_request' r.id %}">Claim</a>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+
+    {# ---- Fillers to keep premium layout when < 3 items ---- #}
+    {% if latest_open|length == 0 %}
+      <div class="home-card home-card--filler">
+        <div class="f-title">No open requests yet</div>
+        <div class="f-text">Be the first to post a request.</div>
+        <div class="f-actions">
+          <a class="btn btn-primary" href="{% url 'create_request' %}">Create request</a>
+        </div>
+      </div>
+      <div class="home-card home-card--filler">
+        <div class="f-title">Volunteer directory</div>
+        <div class="f-text">See people offering help.</div>
+        <div class="f-actions">
+          <a class="btn btn-ghost" href="{% url 'offers_list' %}">View volunteers</a>
+        </div>
+      </div>
+      <div class="home-card home-card--filler">
+        <div class="f-title">Track impact</div>
+        <div class="f-text">Completed requests become public outcomes.</div>
+        <div class="f-actions">
+          <a class="btn btn-ghost" href="{% url 'completed_requests' %}">See completed</a>
+        </div>
+      </div>
+
+    {% elif latest_open|length == 1 %}
+      <div class="home-card home-card--filler">
+        <div class="f-title">Post a new request</div>
+        <div class="f-text">City, category, urgency. Visible instantly.</div>
+        <div class="f-actions">
+          <a class="btn btn-primary" href="{% url 'create_request' %}">Create request</a>
+        </div>
+      </div>
+      <div class="home-card home-card--filler">
+        <div class="f-title">Browse & claim</div>
+        <div class="f-text">Volunteers can claim open cases.</div>
+        <div class="f-actions">
+          <a class="btn btn-ghost" href="{% url 'requests_list' %}">Browse</a>
+        </div>
+      </div>
+
+    {% elif latest_open|length == 2 %}
+      <div class="home-card home-card--filler">
+        <div class="f-title">See all open requests</div>
+        <div class="f-text">Search, filter, and paginate the marketplace.</div>
+        <div class="f-actions">
+          <a class="btn btn-ghost" href="{% url 'requests_list' %}">See all</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="home-section">
+  <div class="home-section-head">
+    <div>
+      <h2 class="home-h2">How it works</h2>
+      <p class="home-p">Simple workflow, clean permissions.</p>
+    </div>
+  </div>
+
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-title">1) Create</div>
+      <div class="how-text">Post city, category, urgency, and details.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-title">2) Claim</div>
+      <div class="how-text">A volunteer claims an open request → In Progress.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-title">3) Track</div>
+      <div class="how-text">Owner + volunteer post updates on the timeline.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-title">4) Complete</div>
+      <div class="how-text">Volunteer marks it completed → visible impact.</div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

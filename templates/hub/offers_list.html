@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Volunteers · CivicAid{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div class="page-head-row">
+    <div>
+      <h1 class="page-title">Volunteers</h1>
+      <p class="page-sub">People offering help by category and city.</p>
+    </div>
+
+    {% if request.user.is_authenticated %}
+      <a class="btn btn-primary" href="{% url 'edit_profile' %}">Become a volunteer</a>
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'login' %}?next={% url 'offers_list' %}">Become a volunteer</a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="filter-bar">
+    <input class="filter-input" type="text" name="q" value="{{ q }}" placeholder="Search name / city / skills" />
+    <select class="filter-select" name="category">
+      <option value="">All categories</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}" {% if category_id|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.name }}
+        </option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-ghost" type="submit">Filter</button>
+  </form>
+</section>
+
+<section>
+  <div class="vol-grid">
+    {% for p in page_obj %}
+  <article class="vol-card">
+    <a class="vol-card-link" href="{% url 'volunteer_detail' p.id %}">
+      <div class="vol-top">
+        <div class="vol-name">{{ p.full_name|default:p.user.username }}</div>
+        <div class="pill">{{ p.city|default:"—" }}</div>
+      </div>
+
+      <div class="vol-meta">
+        <div class="muted">Availability: <span class="strong">{{ p.availability|default:"—" }}</span></div>
+      </div>
+
+      <p class="vol-bio">{{ p.bio|default:"No bio yet."|truncatechars:140 }}</p>
+
+      <div class="vol-tags">
+        {% for c in p.categories.all %}
+          <span class="tag">{{ c.name }}</span>
+        {% empty %}
+          <span class="tag">General</span>
+        {% endfor %}
+      </div>
+    </a>
+
+    <div class="vol-actions">
+      <a class="btn btn-ghost" href="{% url 'volunteer_detail' p.id %}">View profile</a>
+      {% if request.user.is_authenticated and request.user == p.user %}
+        <a class="btn btn-primary" href="{% url 'edit_profile' %}">Edit</a>
+      {% endif %}
+    </div>
+  </article>
+{% endfor %}
+  </div>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-ghost"
+           href="?q={{ q }}&category={{ category_id }}&page={{ page_obj.previous_page_number }}">
+          Prev
+        </a>
+      {% endif %}
+
+      <span class="pill">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+        <a class="btn btn-ghost"
+           href="?q={{ q }}&category={{ category_id }}&page={{ page_obj.next_page_number }}">
+          Next
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
